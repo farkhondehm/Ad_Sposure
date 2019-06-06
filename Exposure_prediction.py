@@ -36,9 +36,9 @@ from imblearn.under_sampling import RandomUnderSampler
 from imblearn.over_sampling import RandomOverSampler
 from sklearn.linear_model import LogisticRegression
 
-=======================================================================================================================================
+=========================================================================================================================================
 ### 2. Upload Data and Cleaning Data
-=======================================================================================================================================
+=========================================================================================================================================
 # Read Data
 data=pd.read_csv('C:/Users/User/Downloads/dump.csv/select___from_scans__where_device_in_965.csv', sep=',',  encoding='latin1', engine='python')
 Population=pd.read_excel(r'C:\\Users\\User\\Desktop\\in.xlsx')  ### poulation of different cities in ontario
@@ -61,7 +61,7 @@ data = data.astype({"device": int})
 
 ============================================================================================================================================
 ## 3. Explarotary Data Analysis
-===================================================================================================================================
+==========================================================================================================================================
 plt.rcParams['figure.figsize']=(8,4)
 
 Exposure_hr=df.groupby(['hour'])['mac_addr'].count()
@@ -91,9 +91,9 @@ plotly.offline.plot(fig, filename='hourly_exposure.html')
 ####################################
 data.groupby(['city'])['mac_addr'].count().plot.bar() 
 
-====================================================================================================================================
+========================================================================================================================================
 ### 4.1 Generate Heat Map for one Truck on a certain day (April 29, 2019)
-======================================================================================================================================
+========================================================================================================================================
 April_29_data=data[(data.month==4)& (data.day==29)&(data.device=='82')]
 
 location =April_29_data.iloc[::10, 0:2]
@@ -110,9 +110,9 @@ heat_data = [[row['lat'],row['lon']] for index, row in location.iterrows()]
 HeatMap(heat_data, max_intensity=30, point_radius=4, dissipating = True ).add_to(mapit)
 mapit.save( 'April_29_data_route.html')
 
-==================================================================================================================================
+========================================================================================================================================
 ### 5. Calculate Growth Rating Point 
-==================================================================================================================================
+========================================================================================================================================
 # GRP cal: % of poulation have been reached to Ads
 
 def GRP(City, Month, Day, Truck):
@@ -128,9 +128,9 @@ def GRP(City, Month, Day, Truck):
 
 GRP('Toronto', 4, 22, 29)
 
-==================================================================================================================================
+=========================================================================================================================================
 ### 6. Model Prediction
-==================================================================================================================================
+=========================================================================================================================================
 
 # 6.1 Reading data prepared for modeling by taking hourly aggregation of whole dataset
 speed_mac=pd.read_excel(r'C:\\Users\\User\\Desktop\\speed_macadr_dev.xlsx')
@@ -174,21 +174,17 @@ X_train, X_test, y_train, y_test = train_test_split(truck_data, truck_labels, te
 # 6.5  Apply Random over classification for imbalanced classes
 ##################################################################
 from imblearn.over_sampling import RandomOverSampler
-
 ros = RandomOverSampler(random_state=42)
 X_tr_ros, y_tr_ros = ros.fit_sample(X_train, y_train)
-#################################################
-#X_val_ros, y_val_ros = ros.fit_sample(X, y)
-#################################################
 Y=pd.DataFrame(y_tr_ros, columns=['mac_addr'])
 Y.mac_addr.value_counts()
-
 X_tr_ros=pd.DataFrame(X_tr_ros) 
 y_tr_ros=pd.Series(y_tr_ros)
 
+####################################################################
 # 6.6 Build the model and train it in KFold
+####################################################################
 from sklearn.ensemble import RandomForestClassifier
-
 from sklearn.model_selection import KFold,StratifiedKFold, RepeatedKFold
 n_fold = 5
 folds = KFold(n_splits=n_fold, shuffle=True, random_state=42)
